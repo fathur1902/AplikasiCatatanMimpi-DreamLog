@@ -10,10 +10,12 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
+import android.content.Intent;
 
 public class AddDreamActivity extends AppCompatActivity {
-    private EditText editTitle, editDescription, editEmotion;
+    private EditText editTitle, editDescription;
     private RequestQueue queue;
+    private int dreamId = -1; // Untuk menentukan apakah ini edit atau tambah
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,30 +24,45 @@ public class AddDreamActivity extends AppCompatActivity {
 
         editTitle = findViewById(R.id.editTitle);
         editDescription = findViewById(R.id.editDescription);
-        editEmotion = findViewById(R.id.editEmotion);
         Button btnSave = findViewById(R.id.btnSave);
         queue = Volley.newRequestQueue(this);
+
+        // Cek apakah ini mode edit
+        Intent intent = getIntent();
+        dreamId = intent.getIntExtra("dream_id", -1);
+        if (dreamId != -1) {
+            // Mode edit: isi data yang ada
+            editTitle.setText(intent.getStringExtra("dream_title"));
+            editDescription.setText(intent.getStringExtra("dream_description"));
+            btnSave.setText("Perbarui");
+        }
 
         btnSave.setOnClickListener(v -> saveDream());
     }
 
     private void saveDream() {
-        String url = "http://192.168.1.5:8080/api/dreams"; // Untuk emulator
+        String url = "http://192.168.1.2:8080/api/dreams";
+        if (dreamId != -1) {
+            url += "/" + dreamId; // URL untuk edit
+        }
+
         try {
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("title", editTitle.getText().toString());
             jsonBody.put("description", editDescription.getText().toString());
-            jsonBody.put("emotion", editEmotion.getText().toString());
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonBody,
+            JsonObjectRequest request = new JsonObjectRequest(
+                    dreamId == -1 ? Request.Method.POST : Request.Method.PUT, url, jsonBody,
                     response -> {
-                        Toast.makeText(this, "Dream saved!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, dreamId == -1 ? "Dream saved!" : "Dream updated!", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
                         finish();
                     },
                     error -> Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show());
             queue.add(request);
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error creating JSON: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

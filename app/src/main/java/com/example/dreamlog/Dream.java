@@ -1,18 +1,60 @@
 package com.example.dreamlog;
 
 public class Dream {
-    private Long id;
+    private int id;
     private String title;
     private String description;
     private String emotion;
 
-    public Dream(String title, String description, String emotion) {
+    public Dream(int id, String title, String description) {
+        this.id = id;
         this.title = title;
         this.description = description;
-        this.emotion = emotion;
+        this.emotion = determineEmotion(description);
     }
 
-    public String getTitle() { return title; }
-    public String getDescription() { return description; }
-    public String getEmotion() { return emotion; }
+    public Dream(String title, String description) {
+        this.id = -1; // Default ID, akan di-set oleh server setelah POST
+        this.title = title;
+        this.description = description;
+        this.emotion = determineEmotion(description);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title != null ? title : "No Title";
+    }
+
+    public String getDescription() {
+        return description != null ? description : "No Description";
+    }
+
+    public String getEmotion() {
+        return emotion != null ? emotion : "tidak diketahui";
+    }
+
+    private String determineEmotion(String description) {
+        if (description == null) return "tidak diketahui";
+
+        String lowerDesc = description.toLowerCase();
+
+        if (lowerDesc.contains("happy") || lowerDesc.contains("joy") || lowerDesc.contains("excited") ||
+                lowerDesc.contains("senang") || lowerDesc.contains("bahagia") || lowerDesc.contains("gembira")) {
+            return "senang";
+        } else if (lowerDesc.contains("sad") || lowerDesc.contains("cry") || lowerDesc.contains("tears") ||
+                lowerDesc.contains("sedih") || lowerDesc.contains("menangis") || lowerDesc.contains("air mata")) {
+            return "sedih";
+        } else if (lowerDesc.contains("scary") || lowerDesc.contains("fear") || lowerDesc.contains("nightmare") ||
+                lowerDesc.contains("takut") || lowerDesc.contains("seram") || lowerDesc.contains("mimpi buruk")) {
+            return "seram";
+        } else if (lowerDesc.contains("weird") || lowerDesc.contains("strange") || lowerDesc.contains("odd") ||
+                lowerDesc.contains("aneh") || lowerDesc.contains("janggal") || lowerDesc.contains("unik")) {
+            return "aneh";
+        } else {
+            return "tidak diketahui";
+        }
+    }
 }

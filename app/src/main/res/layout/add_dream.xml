@@ -22,22 +22,15 @@
         android:hint="Description"
         android:textColor="#FFFFFF"
         android:textColorHint="#AAAAAA"
-        android:backgroundTint="#FF00FF" />
-
-    <EditText
-        android:id="@+id/editEmotion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Emotion (Happy, Sad, Scary, Weird)"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#AAAAAA"
-        android:backgroundTint="#FF00FF" />
+        android:backgroundTint="#FF00FF"
+        android:inputType="textMultiLine"
+        android:minLines="3" />
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Simpan"
         android:backgroundTint="#FF00FF"
         android:textColor="#FFFFFF"
         android:layout_gravity="center" />

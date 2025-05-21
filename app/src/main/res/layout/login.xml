@@ -5,13 +5,30 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient_background"
+    android:gravity="center">
 
-    <!-- Input Title -->
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/logo_dreamlog"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="DreamLog Logo"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textSize="24sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Dream Title"
+        android:hint="Username"
         android:textColorHint="#AAAAAA"
         app:boxBackgroundMode="outline"
         app:boxStrokeColor="#FF00FF"
@@ -23,7 +40,7 @@
         android:layout_marginBottom="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTitle"
+            android:id="@+id/editUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
@@ -31,11 +48,10 @@
             android:padding="8dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Input Description -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description"
+        android:hint="Password"
         android:textColorHint="#AAAAAA"
         app:boxBackgroundMode="outline"
         app:boxStrokeColor="#FF00FF"
@@ -44,25 +60,35 @@
         app:boxCornerRadiusTopEnd="8dp"
         app:boxCornerRadiusBottomStart="8dp"
         app:boxCornerRadiusBottomEnd="8dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editDescription"
+            android:id="@+id/editPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             android:padding="8dp"
-            android:inputType="textMultiLine"
-            android:minLines="3" />
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btnSave"
+        android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Simpan"
+        android:text="Masuk"
         android:backgroundTint="#FF00FF"
         android:textColor="#FFFFFF"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Belum punya akun? Daftar di sini"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
         android:layout_gravity="center" />
 </LinearLayout>

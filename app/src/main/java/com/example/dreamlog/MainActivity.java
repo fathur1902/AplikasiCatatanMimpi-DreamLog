@@ -1,12 +1,14 @@
 package com.example.dreamlog;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.animation.AnimationUtils;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -15,7 +17,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDreamActionListener {
     private RecyclerView recyclerView;
@@ -37,6 +41,15 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
         recyclerView.setAnimation(AnimationUtils.loadAnimation(this, android.R.anim.fade_in));
 
         queue = Volley.newRequestQueue(this);
+
+        SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+        if (token == null) {
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            finish();
+            return;
+        }
+
         loadDreams();
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -44,6 +57,17 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
             Intent intent = new Intent(MainActivity.this, AddDreamActivity.class);
             startActivityForResult(intent, REQUEST_CODE_ADD_DREAM);
         });
+
+        FloatingActionButton fabLogout = findViewById(R.id.fab_logout);
+        if (fabLogout != null) {
+            fabLogout.setOnClickListener(v -> {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove("auth_token");
+                editor.apply();
+                startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+                finish();
+            });
+        }
     }
 
     @Override
@@ -56,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
 
     private void loadDreams() {
         String url = "http://192.168.1.2:8080/api/dreams";
+        SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     Log.d("MainActivity", "Response received: " + response.toString());
@@ -83,7 +110,21 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
                 error -> {
                     error.printStackTrace();
                     Log.e("MainActivity", "Error fetching dreams: " + error.getMessage());
-                });
+                    if (error.networkResponse != null && (error.networkResponse.statusCode == 401 || error.networkResponse.statusCode == 403)) {
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.remove("auth_token");
+                        editor.apply();
+                        startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+                        finish();
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         queue.add(request);
     }
 
@@ -99,15 +140,25 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
     @Override
     public void onDeleteDream(Dream dream) {
         String url = "http://192.168.1.2:8080/api/dreams/" + dream.getId();
+        SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {
                     Log.d("MainActivity", "Dream deleted: " + dream.getId());
-                    loadDreams(); // Refresh data setelah hapus
+                    loadDreams();
                 },
                 error -> {
                     error.printStackTrace();
                     Log.e("MainActivity", "Error deleting dream: " + error.getMessage());
-                });
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + token);
+                return headers;
+            }
+        };
         queue.add(request);
     }
 }

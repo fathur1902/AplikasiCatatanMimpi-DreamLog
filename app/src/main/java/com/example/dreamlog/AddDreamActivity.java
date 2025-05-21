@@ -1,21 +1,25 @@
 package com.example.dreamlog;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
-import android.content.Intent;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddDreamActivity extends AppCompatActivity {
     private EditText editTitle, editDescription;
     private RequestQueue queue;
-    private int dreamId = -1; // Untuk menentukan apakah ini edit atau tambah
+    private int dreamId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +31,9 @@ public class AddDreamActivity extends AppCompatActivity {
         Button btnSave = findViewById(R.id.btnSave);
         queue = Volley.newRequestQueue(this);
 
-        // Cek apakah ini mode edit
         Intent intent = getIntent();
         dreamId = intent.getIntExtra("dream_id", -1);
         if (dreamId != -1) {
-            // Mode edit: isi data yang ada
             editTitle.setText(intent.getStringExtra("dream_title"));
             editDescription.setText(intent.getStringExtra("dream_description"));
             btnSave.setText("Perbarui");
@@ -43,8 +45,11 @@ public class AddDreamActivity extends AppCompatActivity {
     private void saveDream() {
         String url = "http://192.168.1.2:8080/api/dreams";
         if (dreamId != -1) {
-            url += "/" + dreamId; // URL untuk edit
+            url += "/" + dreamId;
         }
+
+        SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", null);
 
         try {
             JSONObject jsonBody = new JSONObject();
@@ -58,7 +63,23 @@ public class AddDreamActivity extends AppCompatActivity {
                         setResult(RESULT_OK);
                         finish();
                     },
-                    error -> Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show());
+                    error -> {
+                        Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (error.networkResponse != null && (error.networkResponse.statusCode == 401 || error.networkResponse.statusCode == 403)) {
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.remove("auth_token");
+                            editor.apply();
+                            startActivity(new Intent(AddDreamActivity.this, WelcomeActivity.class));
+                            finish();
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + token);
+                    return headers;
+                }
+            };
             queue.add(request);
         } catch (Exception e) {
             e.printStackTrace();

@@ -27,6 +27,13 @@
             android:backgroundTint="#FF00FF"
             app:borderWidth="2dp"
             app:fabSize="normal" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|top"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel" />
     </LinearLayout>
 
     <FrameLayout

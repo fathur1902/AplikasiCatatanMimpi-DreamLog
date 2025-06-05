@@ -24,7 +24,7 @@
             android:layout_margin="16dp"
             android:src="@android:drawable/ic_input_add"
             android:tint="#FFFFFF"
-            android:backgroundTint="#FF00FF"
+            android:background="@drawable/rounded_button"
             app:borderWidth="2dp"
             app:fabSize="normal" />
         <com.google.android.material.floatingactionbutton.FloatingActionButton

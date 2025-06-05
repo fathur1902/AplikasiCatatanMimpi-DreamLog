@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
         SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
         if (token == null) {
+            Log.w("MainActivity", "No auth token found, redirecting to WelcomeActivity");
             startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
             finish();
             return;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.remove("auth_token");
                 editor.apply();
+                Log.d("MainActivity", "Logged out, redirecting to WelcomeActivity");
                 startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
                 finish();
             });
@@ -74,14 +76,22 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && (requestCode == REQUEST_CODE_ADD_DREAM || requestCode == REQUEST_CODE_EDIT_DREAM)) {
+            Log.d("MainActivity", "Dream added/edited, reloading dreams");
             loadDreams();
         }
     }
 
     private void loadDreams() {
-        String url = "http://192.168.1.2:8080/api/dreams";
+        String url = "http://192.168.1.12:8080/api/dreams";
         SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
+
+        if (token == null) {
+            Log.e("MainActivity", "Token is null, cannot fetch dreams");
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            finish();
+            return;
+        }
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
@@ -108,20 +118,32 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
                     adapter.notifyDataSetChanged();
                 },
                 error -> {
-                    error.printStackTrace();
-                    Log.e("MainActivity", "Error fetching dreams: " + error.getMessage());
-                    if (error.networkResponse != null && (error.networkResponse.statusCode == 401 || error.networkResponse.statusCode == 403)) {
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.remove("auth_token");
-                        editor.apply();
-                        startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
-                        finish();
+                    if (error.networkResponse != null) {
+                        String errorMessage = "Status code: " + error.networkResponse.statusCode;
+                        try {
+                            String responseData = new String(error.networkResponse.data, "UTF-8");
+                            errorMessage += ", Response: " + responseData;
+                            Log.e("MainActivity", "Error fetching dreams: " + errorMessage);
+                            if (error.networkResponse.statusCode == 401 || error.networkResponse.statusCode == 403) {
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.remove("auth_token");
+                                editor.apply();
+                                Log.w("MainActivity", "Unauthorized, redirecting to WelcomeActivity");
+                                startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+                                finish();
+                            }
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "Error parsing error response: " + e.getMessage());
+                        }
+                    } else if (error.getMessage() != null) {
+                        Log.e("MainActivity", "Error fetching dreams: " + error.getMessage());
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + token);
+                Log.d("MainActivity", "Sending request with token: " + token);
                 return headers;
             }
         };
@@ -130,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
 
     @Override
     public void onEditDream(Dream dream) {
+        Log.d("MainActivity", "Editing dream: " + dream.getId());
         Intent intent = new Intent(MainActivity.this, AddDreamActivity.class);
         intent.putExtra("dream_id", dream.getId());
         intent.putExtra("dream_title", dream.getTitle());
@@ -139,9 +162,16 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
 
     @Override
     public void onDeleteDream(Dream dream) {
-        String url = "http://192.168.1.2:8080/api/dreams/" + dream.getId();
+        String url = "http://192.168.1.12:8080/api/dreams/" + dream.getId();
         SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
+
+        if (token == null) {
+            Log.e("MainActivity", "Token is null, cannot delete dream");
+            startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+            finish();
+            return;
+        }
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 response -> {
@@ -149,13 +179,32 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
                     loadDreams();
                 },
                 error -> {
-                    error.printStackTrace();
-                    Log.e("MainActivity", "Error deleting dream: " + error.getMessage());
+                    if (error.networkResponse != null) {
+                        String errorMessage = "Status code: " + error.networkResponse.statusCode;
+                        try {
+                            String responseData = new String(error.networkResponse.data, "UTF-8");
+                            errorMessage += ", Response: " + responseData;
+                            Log.e("MainActivity", "Error deleting dream: " + errorMessage);
+                            if (error.networkResponse.statusCode == 401 || error.networkResponse.statusCode == 403) {
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.remove("auth_token");
+                                editor.apply();
+                                Log.w("MainActivity", "Unauthorized, redirecting to WelcomeActivity");
+                                startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
+                                finish();
+                            }
+                        } catch (Exception e) {
+                            Log.e("MainActivity", "Error parsing error response: " + e.getMessage());
+                        }
+                    } else if (error.getMessage() != null) {
+                        Log.e("MainActivity", "Error deleting dream: " + error.getMessage());
+                    }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", "Bearer " + token);
+                Log.d("MainActivity", "Sending DELETE request with token: " + token);
                 return headers;
             }
         };

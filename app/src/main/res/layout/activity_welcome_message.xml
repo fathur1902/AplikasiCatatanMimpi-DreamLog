@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:padding="16dp">
+
+    <!-- Dekorasi Bulan -->
+    <ImageView
+        android:id="@+id/decorationCircle"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp"
+        android:src="@drawable/moon"
+        android:contentDescription="Moon Decoration"
+        android:scaleType="fitCenter"
+         />
+
+    <!-- Logo Aplikasi -->
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/logo_dreamlog"
+        android:contentDescription="DreamLog Logo"
+        android:scaleType="fitStart"
+        android:visibility="gone" />
+
+    <!-- Teks Selamat Datang -->
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/decorationCircle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:text="Selamat Datang di DreamLog, [Full Name]!\nMimpi Apa Hari Ini?"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:gravity="center" />
+
+    <!-- Tombol Lanjut -->
+    <Button
+        android:id="@+id/continueButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcomeText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"
+        android:text="Lanjut"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_button"
+        android:textColor="#FFFFFF" />
+
+    <!-- Teks Syarat dan Ketentuan -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/continueButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Dengan mengklik Lanjut, Anda setuju dengan\nSyarat dan Ketentuan Penggunaan DreamLog."
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center" />
+
+</RelativeLayout>

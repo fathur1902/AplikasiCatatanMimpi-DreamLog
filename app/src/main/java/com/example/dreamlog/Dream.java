@@ -41,17 +41,13 @@ public class Dream {
 
         String lowerDesc = description.toLowerCase();
 
-        if (lowerDesc.contains("happy") || lowerDesc.contains("joy") || lowerDesc.contains("excited") ||
-                lowerDesc.contains("senang") || lowerDesc.contains("bahagia") || lowerDesc.contains("gembira")) {
+        if (lowerDesc.contains("senang") || lowerDesc.contains("bahagia") || lowerDesc.contains("gembira")) {
             return "senang";
-        } else if (lowerDesc.contains("sad") || lowerDesc.contains("cry") || lowerDesc.contains("tears") ||
-                lowerDesc.contains("sedih") || lowerDesc.contains("menangis") || lowerDesc.contains("air mata")) {
+        } else if (lowerDesc.contains("sedih") || lowerDesc.contains("menangis") || lowerDesc.contains("air mata")) {
             return "sedih";
-        } else if (lowerDesc.contains("scary") || lowerDesc.contains("fear") || lowerDesc.contains("nightmare") ||
-                lowerDesc.contains("takut") || lowerDesc.contains("seram") || lowerDesc.contains("mimpi buruk")) {
+        } else if (lowerDesc.contains("takut") || lowerDesc.contains("seram") || lowerDesc.contains("mimpi buruk")) {
             return "seram";
-        } else if (lowerDesc.contains("weird") || lowerDesc.contains("strange") || lowerDesc.contains("odd") ||
-                lowerDesc.contains("aneh") || lowerDesc.contains("janggal") || lowerDesc.contains("unik")) {
+        } else if (lowerDesc.contains("aneh") || lowerDesc.contains("janggal") || lowerDesc.contains("unik")) {
             return "aneh";
         } else {
             return "tidak diketahui";

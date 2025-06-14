@@ -47,7 +47,7 @@ public class AddDreamActivity extends AppCompatActivity {
     }
 
     private void saveDream() {
-        String url = "http://192.168.1.12:8080/api/dreams";
+        String url = "https://dreamlog-backend-production.up.railway.app/api/dreams";
         if (dreamId != -1) {
             url += "/" + dreamId;
         }

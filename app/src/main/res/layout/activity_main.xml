@@ -24,7 +24,7 @@
             android:layout_margin="16dp"
             android:src="@android:drawable/ic_input_add"
             android:tint="#FFFFFF"
-            android:background="@drawable/rounded_button"
+            android:backgroundTint="#725CAD"
             app:borderWidth="2dp"
             app:fabSize="normal" />
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|top"
             android:layout_margin="16dp"
+            android:backgroundTint="#725CAD"
             android:src="@android:drawable/ic_menu_close_clear_cancel" />
     </LinearLayout>
 

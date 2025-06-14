@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
-        String url = "http://192.168.1.12:8080/api/users/login";
+        String url = "https://dreamlog-backend-production.up.railway.app/api/users/login";
 
         String username = editUsername.getText().toString().trim();
         String password = editPassword.getText().toString().trim();

@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
     }
 
     private void loadDreams() {
-        String url = "http://192.168.1.12:8080/api/dreams";
+        String url = "https://dreamlog-backend-production.up.railway.app/api/dreams";
         SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
 
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements DreamAdapter.OnDr
 
     @Override
     public void onDeleteDream(Dream dream) {
-        String url = "http://192.168.1.12:8080/api/dreams/" + dream.getId();
+        String url = "https://dreamlog-backend-production.up.railway.app/api/dreams/" + dream.getId();
         SharedPreferences prefs = getSharedPreferences("DreamLogPrefs", MODE_PRIVATE);
         String token = prefs.getString("auth_token", null);
 

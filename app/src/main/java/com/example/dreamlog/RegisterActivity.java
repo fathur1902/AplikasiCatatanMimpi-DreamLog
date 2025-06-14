@@ -48,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void register() {
-        String url = "http://192.168.1.12:8080/api/users/register";
+        String url = "https://dreamlog-backend-production.up.railway.app/api/users/register";
         String fullName = editFullName.getText().toString().trim();
         String email = editEmail.getText().toString().trim();
         String username = editUsername.getText().toString().trim();

@@ -1,6 +1,12 @@
 <resources>
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">#FF00FF</item>
+<!--        <item name="colorPrimary">#FF00FF</item>-->
         <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
+
+    <!-- Tema Splash Screen -->
+    <style name="Theme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/gradient_background</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>
